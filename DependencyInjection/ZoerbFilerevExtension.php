@@ -45,6 +45,11 @@ class ZoerbFilerevExtension extends Extension implements PrependExtensionInterfa
         $defaultPackage = $this->createPackageDefinition($config['base_path'], $config['base_urls'], $defaultVersion);
 
         $container->setDefinition('assets._default_package', $defaultPackage);
+
+        foreach ($config['packages'] as $name => $package) {
+            $container->setDefinition('assets._package_'.$name, 
+                    $this->createPackageDefinition($package['base_path'], $package['base_urls'], $defaultVersion));
+        }
     }
 
 
@@ -129,6 +134,10 @@ class ZoerbFilerevExtension extends Extension implements PrependExtensionInterfa
 
             if (isset($config['assets']['base_path'])) {
                 $frameworkConfig['base_path'] = $config['assets']['base_path'];
+            }
+
+            if (isset($config['assets']['packages'])) {
+                $frameworkConfig['packages'] = $config['assets']['packages'];
             }
 
             $container->prependExtensionConfig($this->getAlias(), $frameworkConfig);

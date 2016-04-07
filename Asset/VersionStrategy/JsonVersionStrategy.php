@@ -39,6 +39,13 @@ class JsonVersionStrategy implements VersionStrategyInterface
     /** @var bool */
     protected $debug;
 
+    /**
+     * Asset base
+     *
+     * @var string
+     */
+    private $basePath;
+
 
     /**
      * @param string $rootDir
@@ -47,13 +54,14 @@ class JsonVersionStrategy implements VersionStrategyInterface
      * @param string $cacheDir
      * @param bool $debug
      */
-    public function __construct($rootDir, $summaryFile, $hashLength, $cacheDir, $debug)
+    public function __construct($rootDir, $summaryFile, $hashLength, $cacheDir, $debug, $basePath)
     {
         $this->rootDir = $rootDir;
         $this->summaryFile = $summaryFile;
         $this->hashLength = $hashLength;
         $this->cacheDir = $cacheDir;
         $this->debug = $debug;
+        $this->basePath = $basePath;
     }
 
     /**
@@ -195,14 +203,13 @@ EOF
         $file = $path;
         // apply the base path
         if ('/' !== substr($path, 0, 1)) {
-            $file = '/'.$path;
+            $file = $this->basePath . '/' . $path;
         }
 
         $reved = $this->getRevedFilename($file);
 
         $absPath = $this->rootDir.$file;
         $absReved = $this->rootDir.$reved;
-
 
         // $reved or unversioned
         if (file_exists($absReved)) {

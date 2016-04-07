@@ -47,8 +47,10 @@ class ZoerbFilerevExtension extends Extension implements PrependExtensionInterfa
         $container->setDefinition('assets._default_package', $defaultPackage);
 
         foreach ($config['packages'] as $name => $package) {
+            error_log("package $name with basePath " . $package['base_path']);
+            $packageVersion = $this->createVersion($container, $config, $name, $package['base_path']);
             $container->setDefinition('assets._package_'.$name, 
-                    $this->createPackageDefinition($package['base_path'], $package['base_urls'], $defaultVersion));
+                    $this->createPackageDefinition("", $package['base_urls'], $packageVersion));
         }
     }
 
@@ -90,7 +92,7 @@ class ZoerbFilerevExtension extends Extension implements PrependExtensionInterfa
      *
      * @return Reference
      */
-    private function createVersion(ContainerBuilder $container, array $config, $name)
+    private function createVersion(ContainerBuilder $container, array $config, $name, $basePath = "")
     {
         // $rootDir, $summaryFile, $hashLength, $cacheDir, $debug)
         $rootDir = $config['root_dir'];
@@ -106,6 +108,7 @@ class ZoerbFilerevExtension extends Extension implements PrependExtensionInterfa
             ->replaceArgument(2, $hashLength)
             ->replaceArgument(3, $cacheDir)
             ->replaceArgument(4, $debug)
+            ->replaceArgument(5, $basePath)
         ;
         $container->setDefinition('assets._version_'.$name, $def);
 
